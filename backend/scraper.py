@@ -3,6 +3,7 @@ import time
 import random
 import urllib.parse
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,11 +18,16 @@ def scrape_indeed(job_title: str, location: str = "Remote", max_jobs: int = 20) 
     
     with sync_playwright() as p:
         # Launch Chromium in NON-headless mode to avoid detection
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(
+            headless=False,
+            args=["--disable-blink-features=AutomationControlled"],
+            ignore_default_args=["--enable-automation"]
+        )
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
         page = context.new_page()
+        stealth_sync(page)
         
         # Format the Indeed search URL
         query = urllib.parse.quote(job_title)
@@ -109,11 +115,16 @@ def scrape_linkedin(job_title: str, location: str = "Remote", max_jobs: int = 20
     
     with sync_playwright() as p:
         # Launch Chromium in NON-headless mode
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(
+            headless=False,
+            args=["--disable-blink-features=AutomationControlled"],
+            ignore_default_args=["--enable-automation"]
+        )
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
         page = context.new_page()
+        stealth_sync(page)
         
         # Format the LinkedIn search URL
         query = urllib.parse.quote(job_title)

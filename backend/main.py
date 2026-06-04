@@ -7,6 +7,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import threading
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -36,6 +37,7 @@ class FindJobsRequest(BaseModel):
     job_title: str
     location: str = "Remote"
     min_score: int = 90
+    max_jobs: int = 20
     
 class ApplyRequest(BaseModel):
     job: Dict[str, Any]
@@ -69,11 +71,11 @@ def find_jobs(req: FindJobsRequest):
     """Scrapes Indeed and LinkedIn, removes duplicates, and filters based on profile matching."""
     try:
         # Scrape jobs
-        indeed_jobs = scrape_indeed(req.job_title, req.location)
+        indeed_jobs = scrape_indeed(req.job_title, req.location, req.max_jobs)
         for j in indeed_jobs:
             j["platform"] = "indeed"
             
-        linkedin_jobs = scrape_linkedin(req.job_title, req.location)
+        linkedin_jobs = scrape_linkedin(req.job_title, req.location, req.max_jobs)
         for j in linkedin_jobs:
             j["platform"] = "linkedin"
             
@@ -161,6 +163,7 @@ def start_session(platform: str):
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
         page = context.new_page()
+        stealth_sync(page)
         page.goto(url)
         
         # Block until the /finish-session endpoint is called or browser is closed

@@ -44,7 +44,8 @@ class ResumeParser:
             '  "job_titles": ["List of past/present job titles"],\n'
             '  "education": "Highest degree, field of study, and institution name as a string, or null",\n'
             '  "languages": ["List of languages spoken"],\n'
-            '  "summary": "2-3 line professional summary as string, or null"\n'
+            '  "summary": "2-3 line professional summary as string, or null",\n'
+            '  "suggested_roles": ["List of 4-6 job titles that closely match the profile. Include seniority variations if appropriate (e.g. Senior Backend Engineer, Mid-Level Node Developer, etc)"]\n'
             "}\n"
             "Do not include any chat formatting, markdown JSON block wrapping (like ```json), or explanatory text outside the JSON object.\n"
             "Return only the raw JSON string.\n\n"
@@ -90,7 +91,8 @@ class ResumeParser:
             "job_titles": list,
             "education": str,
             "languages": list,
-            "summary": str
+            "summary": str,
+            "suggested_roles": list
         }
         
         normalized = {}

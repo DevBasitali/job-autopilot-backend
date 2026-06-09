@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def apply_to_job(job: dict, candidate_profile: dict, platform: str, resume_filename: str = "sample_resume.pdf") -> bool:
     """
     Automates the job application process using a saved browser session.
